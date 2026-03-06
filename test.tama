@@ -1,0 +1,18 @@
+// 100 days of training — 修行
+jutsu train(name, days) {
+    tamashii level = 1
+    kurikaeshi day in 1..days {
+        level = level + 1
+    }
+    kataru name + " completed " + days + " days!"
+    kataru name + " reached level " + level
+    modoru level
+}
+
+hajime {
+    tamashii heroes = ["Naruto", "Goku", "Deku"]
+    kurikaeshi i in 0..2 {
+        train(heroes[i], 10)
+        kataru "===================="
+    }
+}
