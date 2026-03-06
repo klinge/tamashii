@@ -83,7 +83,13 @@ hajime {
 
 TAMASHII transpiles to JavaScript and runs in the browser via `new Function()`.
 The transpiler is a single-pass regex transformer — TAMASHII is basically JavaScript
-wearing a very stylish kimono.
+wearing a very stylish kimono. Or you could think of Javascript as the isekai world where
+Tamashii is invoked. 
+
+This is just an experiment at how to transpile some code into something else. The transpiler is
+brittle and it doesn't do anything or add any real value to Javascript. 
+
+Don't use for anything but fun. 
 
 ## Local development
 
@@ -95,6 +101,10 @@ npm run dev
 ## Deploy
 
 Push to `main` — GitHub Actions handles the rest.
+
+## Credits
+
+Most of the heavy lifting done by Claude AI. 
 
 ---
 
