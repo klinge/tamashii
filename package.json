@@ -2,11 +2,16 @@
   "name": "tamashii",
   "version": "1.0.0",
   "description": "TAMASHII — The anime-inspired programming language",
+  "type": "module",
   "private": true,
+  "bin": {
+    "tamashii": "./bin/tamashii.js"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "cli": "node bin/tamashii.js"
   },
   "dependencies": {
     "react": "^18.3.1",
