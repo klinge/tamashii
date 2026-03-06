@@ -285,7 +285,9 @@ export default function TamashiiIDE() {
             textShadow: `0 0 12px ${P.red}`,
           }}>魂</span>
           <span style={{ fontWeight: "bold", letterSpacing: "4px", fontSize: "12px", color: P.white }}>
-            TAMASHII
+            <a href="https://github.com/klinge/tamashii" target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>
+              TAMASHII
+            </a>
           </span>
           <span style={{ color: P.muted, fontSize: "10px", letterSpacing: "2px" }}>IDE v1.0</span>
         </div>
