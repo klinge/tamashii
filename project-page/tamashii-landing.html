@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAMASHII 魂 — The Soul of Code</title>
+  <meta name="description" content="TAMASHII is an anime-inspired programming language where variables have souls, functions are techniques, and every program has a beginning and an end." />
+  <style>
+    :root {
+      --bg:      #08080f;
+      --panel:   #0f0f18;
+      --border:  #1a1a28;
+      --red:     #e8003d;
+      --red-dim: #3a000f;
+      --accent:  #ffcc00;
+      --green:   #5ecb72;
+      --blue:    #7ab8e8;
+      --purple:  #c792ea;
+      --white:   #eeeef5;
+      --muted:   #44445a;
+      --muted2:  #666680;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background: var(--bg);
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── SCREENTONE ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: radial-gradient(circle, #ffffff07 1px, transparent 1px);
+      background-size: 18px 18px;
+      pointer-events: none;
+    }
+
+    /* ── DIAGONAL ACCENT ── */
+    body::after {
+      content: '';
+      position: fixed; top: 0; right: 0;
+      width: 500px; height: 500px;
+      background: linear-gradient(135deg, transparent 55%, #e8003d18 100%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 900px; margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: relative; z-index: 10;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
+    nav .inner {
+      max-width: 900px; margin: 0 auto;
+      padding: 0 24px;
+      display: flex; align-items: center;
+      height: 48px; gap: 16px;
+    }
+    nav .logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    nav .logo .kanji {
+      font-family: Georgia, serif;
+      font-size: 22px; color: var(--red);
+      text-shadow: 0 0 14px var(--red);
+      line-height: 1;
+    }
+    nav .logo .name {
+      font-size: 13px; font-weight: bold;
+      letter-spacing: 4px; color: var(--white);
+    }
+    nav .spacer { flex: 1; }
+    nav .nav-link {
+      font-size: 10px; letter-spacing: 3px;
+      color: var(--muted2); text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 5px 14px;
+      transition: all 0.15s;
+    }
+    nav .nav-link:hover { color: var(--white); border-color: var(--muted2); }
+    nav .nav-link.cta {
+      color: var(--red); border-color: var(--red);
+      box-shadow: 0 0 10px #e8003d33;
+    }
+    nav .nav-link.cta:hover {
+      background: var(--red); color: #fff;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
+      position: relative;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: 10px; letter-spacing: 6px;
+      color: var(--red); text-transform: uppercase;
+      margin-bottom: 20px; font-weight: bold;
+    }
+    .hero-title {
+      font-size: clamp(64px, 12vw, 110px);
+      font-weight: 900;
+      letter-spacing: -3px;
+      line-height: 1;
+      color: var(--white);
+      font-family: Georgia, serif;
+      text-shadow: 0 0 60px #e8003d66, 0 6px 0 #000;
+      margin-bottom: 8px;
+    }
+    .hero-kanji {
+      font-size: 36px;
+      color: var(--muted);
+      letter-spacing: 10px;
+      margin-bottom: 24px;
+      font-family: Georgia, serif;
+    }
+    .hero-sub {
+      font-size: 13px; color: var(--muted2);
+      letter-spacing: 1px; line-height: 2;
+      max-width: 480px; margin: 0 auto 40px;
+    }
+    .hero-cta {
+      display: inline-block;
+      text-decoration: none;
+      background: var(--red);
+      color: #fff;
+      font-size: 12px; letter-spacing: 4px;
+      padding: 14px 36px;
+      font-weight: bold;
+      font-family: inherit;
+      box-shadow: 0 0 30px #e8003d66;
+      transition: all 0.2s;
+      margin-right: 12px;
+    }
+    .hero-cta:hover { box-shadow: 0 0 50px #e8003daa; transform: translateY(-1px); }
+    .hero-cta-ghost {
+      display: inline-block;
+      text-decoration: none;
+      color: var(--muted2);
+      font-size: 12px; letter-spacing: 4px;
+      padding: 14px 36px;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .hero-cta-ghost:hover { color: var(--white); border-color: var(--muted2); }
+
+    /* speed lines behind hero title */
+    .speed-lines {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 1px; height: 1px;
+      pointer-events: none;
+    }
+    .speed-line {
+      position: absolute;
+      width: 2px;
+      background: linear-gradient(to bottom, transparent, #e8003d22, transparent);
+      transform-origin: 50% 0;
+      top: 0; left: 0;
+    }
+
+    /* ── STATS ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 64px;
+    }
+    .stat {
+      background: var(--panel);
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-val { font-size: 24px; font-weight: bold; color: var(--accent); }
+    .stat-label { font-size: 10px; color: var(--muted2); letter-spacing: 2px; margin-top: 4px; }
+    .stat-kanji { font-size: 18px; color: var(--red); opacity: 0.35; margin-top: 6px; }
+
+    /* ── SECTION HEADING ── */
+    .section-head {
+      font-size: 10px; letter-spacing: 5px; color: var(--red);
+      text-transform: uppercase; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-head::after {
+      content: '';
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, var(--border), transparent);
+    }
+
+    /* ── PHILOSOPHY ── */
+    .philosophy {
+      border-left: 4px solid var(--red);
+      border: 1px solid #e8003d33;
+      border-left: 4px solid var(--red);
+      background: #e8003d08;
+      padding: 28px 32px;
+      margin-bottom: 64px;
+      line-height: 2.2;
+      font-size: 13px;
+      color: var(--muted2);
+    }
+    .philosophy em { color: var(--white); font-style: normal; }
+    .philosophy .accent { color: var(--accent); }
+
+    /* ── KEYWORDS ── */
+    .keywords { margin-bottom: 64px; }
+    .kw-row {
+      display: grid;
+      grid-template-columns: 150px 44px 130px 1fr 20px;
+      gap: 12px;
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      border-top: none;
+      cursor: pointer;
+      transition: background 0.1s;
+      align-items: center;
+    }
+    .kw-row:first-of-type { border-top: 1px solid var(--border); }
+    .kw-row:nth-child(even) { background: #0f0f18; }
+    .kw-row:hover { background: #e8003d08; border-color: #e8003d33; }
+    .kw-row.open { background: #e8003d10; border-color: #e8003d44; }
+    .kw-name { color: var(--accent); font-weight: bold; font-size: 13px; }
+    .kw-kanji { color: var(--red); font-size: 18px; text-align: center; font-family: Georgia, serif; }
+    .kw-meaning { color: var(--muted2); font-size: 11px; }
+    .kw-role { color: var(--white); font-size: 12px; }
+    .kw-arrow { color: var(--muted); font-size: 11px; }
+    .kw-example {
+      display: none;
+      grid-column: 1 / -1;
+      padding: 8px 0 4px 0;
+      border-top: 1px solid #e8003d22;
+    }
+    .kw-row.open .kw-example { display: block; }
+    .kw-example-label {
+      font-size: 10px; letter-spacing: 2px; color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .kw-example code {
+      display: block;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      font-size: 12px; color: var(--white);
+      letter-spacing: 0.3px;
+    }
+
+    /* ── CODE EXAMPLE ── */
+    .code-section { margin-bottom: 64px; }
+    .code-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 0; }
+    .code-tab {
+      background: none; border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--muted2); padding: 8px 20px;
+      font-size: 10px; letter-spacing: 3px;
+      cursor: pointer; font-family: inherit;
+      transition: all 0.15s;
+    }
+    .code-tab.active {
+      color: var(--white);
+      border-bottom-color: var(--red);
+    }
+    .code-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-top: none;
+      display: none;
+    }
+    .code-panel.active { display: block; }
+    .code-inner {
+      padding: 24px;
+      overflow-x: auto;
+    }
+    .code-inner pre {
+      font-size: 13px; line-height: 1.9;
+      font-family: inherit;
+    }
+    .tok-kw     { color: var(--accent); font-weight: bold; }
+    .tok-str    { color: var(--green); }
+    .tok-num    { color: var(--blue); }
+    .tok-bool   { color: var(--purple); }
+    .tok-comment{ color: var(--muted); font-style: italic; }
+    .tok-plain  { color: var(--white); }
+
+    /* ── INSTALL/USE ── */
+    .callout {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--red);
+      padding: 28px 32px;
+      margin-bottom: 64px;
+    }
+    .callout h3 {
+      font-size: 11px; letter-spacing: 4px; color: var(--red);
+      text-transform: uppercase; margin-bottom: 16px;
+    }
+    .callout p {
+      font-size: 13px; color: var(--muted2);
+      line-height: 2; margin-bottom: 12px;
+    }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout em { color: var(--white); font-style: normal; }
+    .callout a { color: var(--accent); text-decoration: none; }
+    .callout a:hover { text-decoration: underline; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 10px; letter-spacing: 3px;
+    }
+    footer .kanji {
+      font-family: Georgia, serif;
+      color: var(--red); font-size: 20px;
+      display: block; margin-bottom: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .kw-row { grid-template-columns: 1fr 40px 24px; }
+      .kw-meaning, .kw-role { display: none; }
+      .hero-cta-ghost { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="inner">
+    <a class="logo" href="#">
+      <span class="kanji">魂</span>
+      <span class="name">TAMASHII</span>
+    </a>
+    <div class="spacer"></div>
+    <a class="nav-link" href="#keywords">Keywords</a>
+    <a class="nav-link" href="#examples">Examples</a>
+    <a class="nav-link cta" href="https://klinge.github.io/tamashii" target="_blank">▶ Try Live IDE</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="wrap">
+  <div class="hero">
+    <div class="speed-lines" id="speedLines"></div>
+    <div class="hero-tag">◆ The Anime-Inspired Programming Language ◆</div>
+    <div class="hero-title">TAMASHII</div>
+    <div class="hero-kanji">魂</div>
+    <div class="hero-sub">
+      A programming language where code has spirit.<br>
+      Variables have souls. Functions are techniques.<br>
+      Every program begins with <em style="color:var(--accent)">hajime</em> and ends at <em style="color:var(--accent)">owari</em>.
+    </div>
+    <a class="hero-cta" href="https://klinge.github.io/tamashii" target="_blank">▶ OPEN IDE</a>
+    <a class="hero-cta-ghost" href="https://github.com/klinge/tamashii" target="_blank">★ GitHub</a>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="wrap">
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val">18</div>
+      <div class="stat-label">Keywords</div>
+      <div class="stat-kanji">語</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">OOP + FP</div>
+      <div class="stat-label">Paradigm</div>
+      <div class="stat-kanji">型</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">.tama</div>
+      <div class="stat-label">Extension</div>
+      <div class="stat-kanji">拡</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">→ JS</div>
+      <div class="stat-label">Transpiles To</div>
+      <div class="stat-kanji">変</div>
+    </div>
+  </div>
+</div>
+
+<!-- PHILOSOPHY -->
+<div class="wrap">
+  <div class="section-head">◆ PHILOSOPHY 言語哲学</div>
+  <div class="philosophy">
+    TAMASHII is built on the idea that <em>code has spirit</em>.
+    Variables aren't just memory — they're <span class="accent">tamashii</span>, souls.
+    Functions aren't subroutines — they're <span class="accent">jutsu</span>, techniques honed through repetition.
+    Classes aren't blueprints — they're <span class="accent">nakama</span>, companions that grow with you.
+    Booleans aren't true/false — they're <span class="accent">shin</span> (truth) and <span class="accent">uso</span> (lie).
+    Null isn't empty — it's <span class="accent">mu</span> (無), nothingness in the Zen sense.
+    <br><br>
+    Every program is a story. Every story has a <span class="accent">hajime</span>.
+    And every story reaches its <span class="accent">owari</span>.
+  </div>
+</div>
+
+<!-- KEYWORDS -->
+<div class="wrap keywords" id="keywords">
+  <div class="section-head">◆ LANGUAGE REFERENCE 語彙</div>
+  <div id="kwList"></div>
+</div>
+
+<!-- CODE EXAMPLES -->
+<div class="wrap code-section" id="examples">
+  <div class="section-head">◆ EXAMPLES 例文</div>
+  <div class="code-tabs" id="codeTabs"></div>
+  <div id="codePanels"></div>
+</div>
+
+<!-- CALLOUT -->
+<div class="wrap">
+  <div class="callout">
+    <h3>◆ HOW IT WORKS 仕組み</h3>
+    <p>
+      TAMASHII is a <em>transpiled language</em> — your <em>.tama</em> source code is compiled to
+      JavaScript and executed in the browser. There's no runtime to install, no compiler to configure.
+      Write TAMASHII, click Run, and your program executes instantly.
+    </p>
+    <p>
+      The <em>live IDE</em> at <a href="https://klinge.github.io/tamashii" target="_blank">klinge.github.io/tamashii</a>
+      includes a full editor with syntax highlighting, a real-time output terminal,
+      and a "Transpiled JS" view so you can see exactly what your TAMASHII code
+      compiles down to.
+    </p>
+    <p>
+      Source code is available on <a href="https://github.com/klinge/tamashii" target="_blank">GitHub</a>.
+    </p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <span class="kanji">魂</span>
+    TAMASHII v1.0 ◆ THE SOUL OF CODE ◆ tamashii.klin.ge
+  </div>
+</footer>
+
+<script>
+// ── SPEED LINES ──
+const sl = document.getElementById('speedLines');
+for (let i = 0; i < 10; i++) {
+  const d = document.createElement('div');
+  d.className = 'speed-line';
+  const h = 80 + i * 22;
+  Object.assign(d.style, {
+    height: h + 'px',
+    transform: `rotate(${i * 36}deg) translateX(-50%)`,
+    opacity: '0.35',
+  });
+  sl.appendChild(d);
+}
+
+// ── KEYWORDS ──
+const KEYWORDS = [
+  { keyword: "tamashii", kanji: "魂", meaning: "soul",        role: "Variable declaration",  example: 'tamashii hp = 100' },
+  { keyword: "jutsu",    kanji: "術", meaning: "technique",   role: "Function definition",   example: 'jutsu attack(target) { ... }' },
+  { keyword: "nakama",   kanji: "仲間",meaning: "companion",  role: "Class / struct",         example: 'nakama Hero { ... }' },
+  { keyword: "hajime",   kanji: "始め",meaning: "begin",      role: "Entry point (main)",     example: 'hajime { kataru "Start!" }' },
+  { keyword: "kataru",   kanji: "語る",meaning: "narrate",    role: "Print / output",         example: 'kataru "Omae wa mou..."' },
+  { keyword: "moshi",    kanji: "もし",meaning: "if",         role: "Conditional",            example: 'moshi hp > 0 { ... }' },
+  { keyword: "soredemo", kanji: "それでも", meaning: "even so", role: "Else",                 example: 'soredemo { ... }' },
+  { keyword: "kurikaeshi",kanji:"繰り返し",meaning:"repeat",  role: "Loop",                   example: 'kurikaeshi i in 0..10 { }' },
+  { keyword: "yobu",     kanji: "呼ぶ",meaning: "summon",     role: "Import",                 example: 'yobu "sekai"' },
+  { keyword: "modoru",   kanji: "戻る",meaning: "return",     role: "Return value",           example: 'modoru result' },
+  { keyword: "mu",       kanji: "無",  meaning: "nothingness",role: "Null / None",            example: 'tamashii x = mu' },
+  { keyword: "shin",     kanji: "真",  meaning: "truth",      role: "Boolean true",           example: 'tamashii alive = shin' },
+  { keyword: "uso",      kanji: "嘘",  meaning: "lie",        role: "Boolean false",          example: 'tamashii dead = uso' },
+  { keyword: "chikara",  kanji: "力",  meaning: "power",      role: "Constant (immutable)",   example: 'chikara MAX_LEVEL = 99' },
+  { keyword: "koe",      kanji: "声",  meaning: "voice",      role: "String type",            example: 'tamashii name: koe = "Goku"' },
+  { keyword: "kazu",     kanji: "数",  meaning: "number",     role: "Number type",            example: 'tamashii hp: kazu = 9000' },
+  { keyword: "nani",     kanji: "何",  meaning: "what",       role: "Any / dynamic type",     example: 'tamashii x: nani = ...' },
+  { keyword: "owari",    kanji: "終わり",meaning:"the end",   role: "Program exit / break",   example: 'owari' },
+];
+
+// ── SYNTAX HIGHLIGHT ──
+const KW_SET = new Set(KEYWORDS.map(k => k.keyword));
+function highlight(code) {
+  return code.replace(/(\/\/.*$|"[^"]*"|\b[a-zA-Z_]\w*\b|\d+)/gm, (t) => {
+    if (t.startsWith('//'))   return `<span class="tok-comment">${t}</span>`;
+    if (t.startsWith('"'))    return `<span class="tok-str">${t}</span>`;
+    if (KW_SET.has(t))        return `<span class="tok-kw">${t}</span>`;
+    if (/^\d+$/.test(t))      return `<span class="tok-num">${t}</span>`;
+    if (['mu','shin','uso'].includes(t)) return `<span class="tok-bool">${t}</span>`;
+    return t;
+  });
+}
+
+const kwList = document.getElementById('kwList');
+KEYWORDS.forEach((kw, i) => {
+  const row = document.createElement('div');
+  row.className = 'kw-row';
+  row.innerHTML = `
+    <span class="kw-name">${kw.keyword}</span>
+    <span class="kw-kanji">${kw.kanji}</span>
+    <span class="kw-meaning">${kw.meaning}</span>
+    <span class="kw-role">${kw.role}</span>
+    <span class="kw-arrow">▼</span>
+    <div class="kw-example">
+      <div class="kw-example-label">EXAMPLE:</div>
+      <code>${highlight(kw.example)}</code>
+    </div>
+  `;
+  row.addEventListener('click', () => {
+    const isOpen = row.classList.contains('open');
+    document.querySelectorAll('.kw-row.open').forEach(r => {
+      r.classList.remove('open');
+      r.querySelector('.kw-arrow').textContent = '▼';
+    });
+    if (!isOpen) {
+      row.classList.add('open');
+      row.querySelector('.kw-arrow').textContent = '▲';
+    }
+  });
+  kwList.appendChild(row);
+});
+
+// ── CODE EXAMPLES ──
+const EXAMPLES = [
+  { ep: "EP.1", title: "Hello World", code:
+`// First steps — 最初の一歩
+hajime {
+    kataru "Konnichiwa, Sekai!"
+    tamashii msg = "Every journey starts with hajime."
+    kataru msg
+}` },
+  { ep: "EP.2", title: "Power Check", code:
+`// It's over 9000 — 超えた!
+jutsu checkPower(level) {
+    moshi level > 9000 {
+        kataru "OVER NINE THOUSAND!"
+        modoru shin
+    } soredemo {
+        kataru "Power: " + level
+        modoru uso
+    }
+}
+
+hajime {
+    tamashii readings = [500, 9001, 99999]
+    kurikaeshi i in 0..2 {
+        checkPower(readings[i])
+    }
+}` },
+  { ep: "EP.3", title: "Training Arc", code:
+`// The power of repetition — 繰り返しの力
+jutsu train(name, days) {
+    tamashii level = 1
+    kurikaeshi day in 1..days {
+        level = level + 1
+    }
+    kataru name + " reached level " + level
+    modoru level
+}
+
+hajime {
+    train("Naruto", 100)
+    train("Goku",   999)
+}` },
+  { ep: "EP.4", title: "Nakama", code:
+`// The power of bonds — 仲間の力
+nakama Warrior {
+    tamashii name = "Unknown"
+    tamashii level = 1
+
+    jutsu train() {
+        level = level + 1
+    }
+
+    jutsu status() {
+        kataru "[ " + name + " ] LV." + level
+    }
+}
+
+hajime {
+    tamashii hero = Warrior()
+    hero.name = "Ichigo"
+    kurikaeshi i in 1..5 {
+        hero.train()
+    }
+    hero.status()
+}` },
+];
+
+const codeTabs   = document.getElementById('codeTabs');
+const codePanels = document.getElementById('codePanels');
+
+EXAMPLES.forEach((ex, i) => {
+  const tab = document.createElement('button');
+  tab.className = 'code-tab' + (i === 0 ? ' active' : '');
+  tab.textContent = ex.ep + ' ' + ex.title;
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + i).classList.add('active');
+  });
+  codeTabs.appendChild(tab);
+
+  const panel = document.createElement('div');
+  panel.className = 'code-panel' + (i === 0 ? ' active' : '');
+  panel.id = 'panel-' + i;
+  const lines = ex.code.split('\n').map((ln, j) =>
+    `<span style="color:var(--muted);font-size:11px;display:inline-block;width:28px;text-align:right;margin-right:12px;user-select:none">${j+1}</span>${highlight(ln)}`
+  ).join('\n');
+  panel.innerHTML = `<div class="code-inner"><pre>${lines}</pre></div>`;
+  codePanels.appendChild(panel);
+});
+</script>
+</body>
+</html>
